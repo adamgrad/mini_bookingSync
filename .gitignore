@@ -19,9 +19,10 @@
 
 .byebug_history
 
-.idea/workspace.xml
+.idea/*
+
 
 # Ignore application configuration
 /config/application.yml
 
-.idea/mini_bookingsyncAPI.iml
+
