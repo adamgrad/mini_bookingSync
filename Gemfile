@@ -10,8 +10,9 @@ end
 gem 'rails', '~> 5.1.4'
 gem 'jsonapi-resources'
 gem 'faker'
-gem 'devise'
-gem 'devise_token_auth'
+#gem 'devise'
+#gem 'devise_token_auth'
+gem 'figaro'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use Puma as the app server
