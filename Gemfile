@@ -10,6 +10,7 @@ end
 gem 'rails', '~> 5.1.4'
 gem 'jsonapi-resources'
 gem 'faker'
+gem 'date_validator', '~> 0.9.0'
 #gem 'devise'
 #gem 'devise_token_auth'
 gem 'figaro'
