@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="jumbotron">
+    <% if user_signed_in? %>
+       <h3> Authentication Token: <strong><%= ENV['API_TOKEN'] %></strong></h3>
+    <% else %>
+      <h1>Log in to view content.</h1>
+      <p>Sign up if you don't have an account.</p>
+      <%= link_to "Sign up", new_user_registration_path, class:"btn btn-default btn-xl" %>
+    <% end %>
+  </div>
+</div>

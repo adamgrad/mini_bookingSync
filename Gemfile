@@ -8,12 +8,18 @@ end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
+gem 'jquery-ui-rails'
 gem 'jsonapi-resources'
 gem 'faker'
 gem 'date_validator', '~> 0.9.0'
-#gem 'devise'
-#gem 'devise_token_auth'
+gem 'devise'
 gem 'figaro'
+gem 'bootstrap-sass', '3.3.7'
+gem 'devise-bootstrap-views'
+gem 'sass-rails', '~> 5.0'
+gem 'jquery-rails', '4.3.1'
+gem 'turbolinks', '~> 5'
+
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use Puma as the app server

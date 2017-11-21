@@ -1,2 +1,2 @@
-class RentalsController < ApplicationController
+class RentalsController < BaseController
 end
