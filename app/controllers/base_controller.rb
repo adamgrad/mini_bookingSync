@@ -7,7 +7,6 @@
     protected
 
     def authenticate_by_token
-      Rails.logger.debug request
       authenticate_or_request_with_http_token do |token, options|
         ActiveSupport::SecurityUtils.secure_compare(
             ::Digest::SHA256.hexdigest(token),
