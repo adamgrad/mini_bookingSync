@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require "rails"
+require 'rails/all'
 # Pick the frameworks you want:
 require "active_model/railtie"
 require "active_job/railtie"
@@ -30,5 +31,12 @@ module MiniBookingsyncapi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = false
     config.middleware.use ActionDispatch::Flash
+    config.generators do |g|
+      g.test_framework :rspec,
+        view_specs: false,
+        helper_specs: false,
+        routing_specs: false,
+        request_specs: false
+    end
   end
 end
