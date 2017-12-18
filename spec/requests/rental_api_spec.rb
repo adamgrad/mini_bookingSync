@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'api/v1/rentals_controller'
 
-RSpec.describe 'Rentals Api', type: :request do
+RSpec.describe 'Rentals API', type: :request do
   describe 'GET /rentals' do
     context 'as an authorized user' do
       before do
@@ -12,9 +12,8 @@ RSpec.describe 'Rentals Api', type: :request do
         expect(response.status).to eq 200
       end
 
-      it 'returns an empty data array' do
-        json = JSON.parse(response.body)
-        expect(json['data']).to be_empty
+      it 'returns data array' do
+        expect(parsed_body['data']).to be_an(Array)
       end
     end
 
@@ -23,22 +22,26 @@ RSpec.describe 'Rentals Api', type: :request do
         get '/rentals'
         expect(response).to have_http_status 401
       end
-
     end
-
   end
 
   describe 'POST /rentals' do
     context 'as an authorized user' do
       context 'with valid attributes' do
-        it 'creates a rental (201)' do
+        before do
           rental_attributes = FactoryBot.attributes_for(:rental)
           expect {
             post '/rentals', params: create_jsonapi_rental_hash(rental_attributes).to_json,
               headers: headers(ENV['API_TOKEN'])
           }.to change(Rental, :count).by(1)
+        end
 
+        it 'returns a 201 response' do
           expect(response).to have_http_status 201
+        end
+
+        it 'returns data array' do
+          expect(parsed_body['data']).not_to be_empty
         end
       end
 
@@ -91,12 +94,22 @@ RSpec.describe 'Rentals Api', type: :request do
 
     context 'as an authorized user' do
       context 'with valid attributes' do
-        it 'updates rental' do
+        before do
           rental_params = FactoryBot.attributes_for(:rental, name: 'New Rental Name')
           patch rental_path(@rental), params: update_jsonapi_rental_hash(rental_params, @rental.id),
-                                      headers: headers(ENV['API_TOKEN'])
-          expect(response).to have_http_status 200
+            headers: headers(ENV['API_TOKEN'])
+        end
+
+        it 'updates rental' do
           expect(@rental.reload.name).to eq 'New Rental Name'
+        end
+
+        it 'returns a 200 response' do
+          expect(response).to have_http_status 200
+        end
+
+        it 'returns data array' do
+          expect(parsed_body).not_to be_empty
         end
       end
 
@@ -121,7 +134,35 @@ RSpec.describe 'Rentals Api', type: :request do
       end
     end
   end
-  
+
+  describe 'DELETE /rentals/:rental' do
+    before do
+      @rental = FactoryBot.create(:rental)
+    end
+
+    context 'as an authorized user' do
+      it 'deletes rental (204)' do
+        expect {
+          delete rental_path(@rental), params: {}, headers: headers(ENV['API_TOKEN'])
+        }.to change(Rental, :count).by(-1)
+        expect(response).to have_http_status 204
+      end
+    end
+
+    context 'as an unauthorized user' do
+      it 'doesn\'t delete rental' do
+        expect {
+          delete rental_path(@rental), params: {}, headers: headers('InvalidToken')
+        }.not_to change(Rental, :count)
+        expect(response).to have_http_status 401
+      end
+    end
+  end
+
+  def parsed_body
+    JSON.parse(response.body)
+  end
+
   def create_jsonapi_rental_hash(attributes)
     { data:
       { type: 'rentals',
