@@ -1,0 +1,11 @@
+AllCops:
+  Exclude:
+    - spec/**/*
+    - config/**/*
+    - log/*
+    - db/**/*
+    - bin/**/*
+    - Gemfile
+    - Rakefile
+Documentation:
+  Enabled: false
