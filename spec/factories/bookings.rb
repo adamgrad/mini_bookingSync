@@ -24,7 +24,7 @@ FactoryBot.define do
 
     trait :ends_before_start_at do
       start_at Date.current.in_time_zone
-      end_at 1.days.ago
+      end_at 1.day.ago
     end
   end
 end

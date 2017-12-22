@@ -1,63 +1,63 @@
-require 'rails_helper'
-require 'api/v1/bookings_controller'
+require "rails_helper"
+require "api/v1/bookings_controller"
 
-RSpec.describe 'Bookings API', type: :request do
-  describe 'GET /bookings' do
-    context 'as an autorized user' do
+RSpec.describe "Bookings API", type: :request do
+  describe "GET /bookings" do
+    context "as an authorized user" do
       before do
-        get '/bookings', params: {}, headers: headers
+        get "/bookings", params: {}, headers: headers
       end
 
-      it 'returns a 200 response' do
+      it "returns a 200 response" do
         expect(response).to have_http_status 200
       end
 
-      it 'returns a data array' do
-        expect(parsed_body['data']).to be_an(Array)
+      it "returns a data array" do
+        expect(parsed_body["data"]).to be_an(Array)
       end
     end
 
-    context 'as an aunauthorized user' do
-      it 'returns a 401 response' do
-        get '/bookings'
+    context "as an unauthorized user" do
+      it "returns a 401 response" do
+        get "/bookings"
         expect(response).to have_http_status 401
       end
     end
   end
 
-  describe 'POST /bookings' do
-    context 'as an autorized user' do
-      context 'with valid attributes' do
+  describe "POST /bookings" do
+    context "as an authorized user" do
+      context "with valid attributes" do
         before do
-          @rental = FactoryBot.create(:rental, name: 'Specific Rental')
+          @rental = FactoryBot.create(:rental, name: "Specific Rental")
           booking_attributes = FactoryBot.attributes_for(:booking, rental: @rental)
           expect {
-            post '/bookings', params: create_jsonapi_booking_hash(@rental.id, booking_attributes).to_json,
+            post "/bookings", params: create_jsonapi_booking_hash(@rental.id, booking_attributes).to_json,
                               headers: headers
           }.to change(Booking, :count).by(1)
 
         end
 
-        it 'returns a 201 response' do
+        it "returns a 201 response" do
           expect(response).to have_http_status 201
         end
 
-        it 'returns data array' do
-          expect(parsed_body['data']).not_to be_empty
+        it "returns data array" do
+          expect(parsed_body["data"]).not_to be_empty
         end
 
-        it 'belongs to a specific rental' do
+        it "belongs to a specific rental" do
           expect(fetch_rental_id).to eql @rental.id.to_s
         end
 
       end
 
-      context 'with invalid attributes' do
-        it 'doesn\'t create a booking without start date' do
+      context "with invalid attributes" do
+        it "doesn't create a booking without start date" do
           rental = FactoryBot.create(:rental)
           booking_attributes = FactoryBot.attributes_for(:booking, rental: rental, start_at: nil)
           expect {
-            post '/bookings', params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
+            post "/bookings", params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
                               headers: headers
           }.not_to change(Booking, :count)
 
@@ -66,13 +66,13 @@ RSpec.describe 'Bookings API', type: :request do
       end
     end
 
-    context 'as an unauthorized user' do
-      it 'returns a 401 response' do
+    context "as an unauthorized user" do
+      it "returns a 401 response" do
         rental = FactoryBot.create(:rental)
         booking_attributes = FactoryBot.attributes_for(:booking)
         expect {
-          post '/bookings', params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
-            headers: headers('InvalidToken')
+          post "/bookings", params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
+            headers: headers("InvalidToken")
         }.not_to change(Booking, :count)
 
         expect(response).to have_http_status 401
@@ -80,35 +80,35 @@ RSpec.describe 'Bookings API', type: :request do
     end
   end
 
-  describe 'PATCH /bookings/:booking' do
+  describe "PATCH /bookings/:booking" do
     before do
       @booking = FactoryBot.create(:booking)
       @client_email = @booking.client_email
     end
 
-    context 'as an authorized user' do
-      context 'with valid attributes' do
+    context "as an authorized user" do
+      context "with valid attributes" do
         before do
-          booking_params = FactoryBot.attributes_for(:booking, client_email: 'new@mail.com')
+          booking_params = FactoryBot.attributes_for(:booking, client_email: "new@mail.com")
           patch booking_path(@booking),
             params: update_jsonapi_booking_hash(@booking.id, @booking.rental.id, booking_params),
             headers: headers
         end
 
-        it 'updates booking' do
-          expect(@booking.reload.client_email).to eq 'new@mail.com'
+        it "updates booking" do
+          expect(@booking.reload.client_email).to eq "new@mail.com"
         end
 
-        it 'returns a 200 response' do
+        it "returns a 200 response" do
           expect(response).to have_http_status 200
         end
 
-        it 'returns data array' do
-          expect(parsed_body['data']).not_to be_empty
+        it "returns data array" do
+          expect(parsed_body["data"]).not_to be_empty
         end
       end
 
-      context 'with invalid attributes' do
+      context "with invalid attributes" do
         before do
           booking_params = FactoryBot.attributes_for(:booking, client_email: nil)
           patch booking_path(@booking),
@@ -116,41 +116,41 @@ RSpec.describe 'Bookings API', type: :request do
             headers: headers
         end
 
-        it 'doesn\'t update booking' do
+        it "doesn't update booking" do
           expect(@booking.reload.client_email).to eq @client_email
         end
 
-        it 'returns errors' do
-          expect(parsed_body['errors']).not_to be_empty
+        it "returns errors" do
+          expect(parsed_body["errors"]).not_to be_empty
         end
       end
     end
 
-    context 'as an aunauthorized user' do
+    context "as an aunauthorized user" do
       before do
-        booking_params = FactoryBot.attributes_for(:booking, client_email: 'new@mail.com')
+        booking_params = FactoryBot.attributes_for(:booking, client_email: "new@mail.com")
         patch booking_path(@booking),
           params: update_jsonapi_booking_hash(@booking.id, @booking.rental.id, booking_params),
-          headers: headers('InvalidToken')
+          headers: headers("InvalidToken")
       end
 
-      it 'doesn\'t update booking' do
+      it "doesn't update booking" do
         expect(@booking.reload.client_email).to eq @client_email
       end
 
-      it 'returns a 401 response' do
+      it "returns a 401 response" do
         expect(response).to have_http_status 401
       end
     end
   end
 
-  describe 'DELETE /bookings/:booking' do
+  describe "DELETE /bookings/:booking" do
     before do
       @booking = FactoryBot.create(:booking)
     end
 
-    context 'as an authorized user' do
-      it 'deletes booking (204)' do
+    context "as an authorized user" do
+      it "deletes booking (204)" do
         expect {
           delete booking_path(@booking), params: {}, headers: headers
         }.to change(Booking, :count).by(-1)
@@ -158,10 +158,10 @@ RSpec.describe 'Bookings API', type: :request do
       end
     end
 
-    context 'as an aunauthorized user' do
-      it 'returns a 401 response' do
+    context "as an aunauthorized user" do
+      it "returns a 401 response" do
         expect {
-          delete booking_path(@booking), params: {}, headers: headers('InvalidToken')
+          delete booking_path(@booking), params: {}, headers: headers("InvalidToken")
         }.not_to change(Booking, :count)
         expect(response).to have_http_status 401
       end
@@ -169,15 +169,15 @@ RSpec.describe 'Bookings API', type: :request do
   end
 
   def fetch_rental_id
-    parsed_body.fetch('data').fetch('relationships').fetch('rental').fetch('data').fetch('id')
+    parsed_body.fetch("data").fetch("relationships").fetch("rental").fetch("data").fetch("id")
   end
 
   def parsed_body
     JSON.parse(response.body)
   end
 
-  def headers(token = ENV['API_TOKEN'])
-    { Authorization: "Token #{token}", 'Content-type': 'application/vnd.api+json' }
+  def headers(token = ENV["API_TOKEN"])
+    { Authorization: "Token #{token}", "Content-type": "application/vnd.api+json" }
   end
 
   def create_jsonapi_booking_hash(rental_id, attributes)
