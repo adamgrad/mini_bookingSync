@@ -5,13 +5,10 @@ RSpec.feature "User interactions", type: :feature do
     user = FactoryBot.build(:user)
     visit root_path
     click_link "Sign up"
-    expect {
-      fill_in "Email", with: user.email
-      fill_in "Password", with: user.password
-      fill_in "Password confirmation", with: user.password
-      click_button "Sign up"
-    }.to change(User, :count).by(1)
-
+    fill_in "Email", with: user.email
+    fill_in "Password", with: user.password
+    fill_in "Password confirmation", with: user.password
+    expect { click_button "Sign up" }.to change(User, :count).by(1)
     expect(page).to have_content "Welcome! You have signed up successfully."
   end
 

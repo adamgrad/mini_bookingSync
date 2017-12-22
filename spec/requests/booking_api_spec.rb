@@ -28,11 +28,12 @@ RSpec.describe "Bookings API", type: :request do
   describe "POST /bookings" do
     context "as an authorized user" do
       context "with valid attributes" do
+        let(:rental) { FactoryBot.create(:rental, name: "Specific Rental") }
+
         before do
-          @rental = FactoryBot.create(:rental, name: "Specific Rental")
-          booking_attributes = FactoryBot.attributes_for(:booking, rental: @rental)
+          booking_attributes = FactoryBot.attributes_for(:booking, rental: rental)
           expect {
-            post "/bookings", params: create_jsonapi_booking_hash(@rental.id, booking_attributes).to_json,
+            post "/bookings", params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
                               headers: headers
           }.to change(Booking, :count).by(1)
 
@@ -47,9 +48,8 @@ RSpec.describe "Bookings API", type: :request do
         end
 
         it "belongs to a specific rental" do
-          expect(fetch_rental_id).to eql @rental.id.to_s
+          expect(fetch_rental_id).to eql rental.id.to_s
         end
-
       end
 
       context "with invalid attributes" do
@@ -81,22 +81,20 @@ RSpec.describe "Bookings API", type: :request do
   end
 
   describe "PATCH /bookings/:booking" do
-    before do
-      @booking = FactoryBot.create(:booking)
-      @client_email = @booking.client_email
-    end
+    let(:booking) { FactoryBot.create(:booking) }
+    let(:client_email) { booking.client_email }
 
     context "as an authorized user" do
       context "with valid attributes" do
         before do
           booking_params = FactoryBot.attributes_for(:booking, client_email: "new@mail.com")
-          patch booking_path(@booking),
-            params: update_jsonapi_booking_hash(@booking.id, @booking.rental.id, booking_params),
+          patch booking_path(booking),
+            params: update_jsonapi_booking_hash(booking.id, booking.rental.id, booking_params),
             headers: headers
         end
 
         it "updates booking" do
-          expect(@booking.reload.client_email).to eq "new@mail.com"
+          expect(booking.reload.client_email).to eq "new@mail.com"
         end
 
         it "returns a 200 response" do
@@ -111,13 +109,13 @@ RSpec.describe "Bookings API", type: :request do
       context "with invalid attributes" do
         before do
           booking_params = FactoryBot.attributes_for(:booking, client_email: nil)
-          patch booking_path(@booking),
-            params: update_jsonapi_booking_hash(@booking.id, @booking.rental.id, booking_params),
+          patch booking_path(booking),
+            params: update_jsonapi_booking_hash(booking.id, booking.rental.id, booking_params),
             headers: headers
         end
 
         it "doesn't update booking" do
-          expect(@booking.reload.client_email).to eq @client_email
+          expect(booking.reload.client_email).to eq client_email
         end
 
         it "returns errors" do
@@ -129,13 +127,13 @@ RSpec.describe "Bookings API", type: :request do
     context "as an aunauthorized user" do
       before do
         booking_params = FactoryBot.attributes_for(:booking, client_email: "new@mail.com")
-        patch booking_path(@booking),
-          params: update_jsonapi_booking_hash(@booking.id, @booking.rental.id, booking_params),
+        patch booking_path(booking),
+          params: update_jsonapi_booking_hash(booking.id, booking.rental.id, booking_params),
           headers: headers("InvalidToken")
       end
 
       it "doesn't update booking" do
-        expect(@booking.reload.client_email).to eq @client_email
+        expect(booking.reload.client_email).to eq client_email
       end
 
       it "returns a 401 response" do
