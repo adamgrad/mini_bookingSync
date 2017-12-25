@@ -1,24 +1,29 @@
-# README
+# mini BookingSync API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Setup
+These instruction will get you a copy of the project up and running on your local machine.
 
-Things you may want to cover:
+```
+$ cd ~/workspace
+$ git clone https://github.com/adamgrad/mini_bookingSync.git
+$ cd mini_bookingSync
+$ bundle install
+```
+### Important config
+Make sure to rename config files
+```
+$ mv config/application.yml.example config/application.yml
+$ mv config/database.yml.example config/database.yml
+```
 
-* Ruby version
+Create database
+```
+$ rails db:migrate
+```
 
-* System dependencies
+After all those steps your test suite should pass
 
-* Configuration
+```
+$ bin/rspec
+```
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
