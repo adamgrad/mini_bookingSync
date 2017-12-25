@@ -24,10 +24,11 @@
 
 # Ignore application configuration
 /config/application.yml
-
+/config/database.yml
 
 /coverage/
 
 .rubocop_todo.yml
 
 .rubocop.yml
+
