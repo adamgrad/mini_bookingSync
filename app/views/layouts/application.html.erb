@@ -29,7 +29,7 @@
   <%= yield %>
 
   <% if user_signed_in? %>
-    <%= link_to "Logout", destroy_user_session_path, method: :delete, class:"btn btn-danger btn-xl" %>
+    <%= link_to "Logout", destroy_user_session_path, class:"btn btn-danger btn-xl" %>
   <% end %>
 </div>
 </body>

@@ -1,0 +1,27 @@
+Metrics/MethodLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+Bundler/OrderedGems:
+  Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+ClassAndModuleChildren:
+  EnforcedStyle: compact
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+Documentation:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/BlockDelimiters:
+  Enabled: false
+
+AllCops:
+  Exclude:
+    - log/**
+    - Gemfile
