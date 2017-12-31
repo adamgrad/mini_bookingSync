@@ -5,7 +5,7 @@ RSpec.describe "Rentals API", type: :request do
   describe "GET /rentals" do
     context "as an authorized user" do
       before do
-        get "/rentals", params: {}, headers: { Authorization: "Token #{ENV["API_TOKEN"]}"}
+        get "/rentals", params: {}, headers: { Authorization: "Token #{ENV['API_TOKEN']}" }
       end
 
       it "returns a 200 response" do
@@ -32,7 +32,7 @@ RSpec.describe "Rentals API", type: :request do
           rental_attributes = FactoryBot.attributes_for(:rental)
           expect {
             post "/rentals", params: create_jsonapi_rental_hash(rental_attributes).to_json,
-              headers: headers(ENV["API_TOKEN"])
+                             headers: headers(ENV["API_TOKEN"])
           }.to change(Rental, :count).by(1)
         end
 
@@ -51,7 +51,7 @@ RSpec.describe "Rentals API", type: :request do
             rental_attributes = FactoryBot.attributes_for(:rental, name: nil)
             expect {
               post "/rentals", params: create_jsonapi_rental_hash(rental_attributes).to_json,
-                headers: headers(ENV["API_TOKEN"])
+                               headers: headers(ENV["API_TOKEN"])
             }.not_to change(Rental, :count)
 
             expect(response).to have_http_status 422
@@ -63,7 +63,7 @@ RSpec.describe "Rentals API", type: :request do
             rental_attributes = FactoryBot.attributes_for(:rental, daily_rate: nil)
             expect {
               post "/rentals", params: create_jsonapi_rental_hash(rental_attributes).to_json,
-                headers: headers(ENV["API_TOKEN"])
+                               headers: headers(ENV["API_TOKEN"])
             }.not_to change(Rental, :count)
 
             expect(response).to have_http_status 422
@@ -77,12 +77,11 @@ RSpec.describe "Rentals API", type: :request do
         rental_attributes = FactoryBot.attributes_for(:rental)
         expect {
           post "/rentals", params: create_jsonapi_rental_hash(rental_attributes).to_json,
-            headers: headers("InvalidToken")
+                           headers: headers("InvalidToken")
         }.not_to change(Rental, :count)
 
         expect(response).to have_http_status 401
       end
-
     end
   end
 
@@ -97,7 +96,7 @@ RSpec.describe "Rentals API", type: :request do
         before do
           rental_params = FactoryBot.attributes_for(:rental, name: "New Rental Name")
           patch rental_path(@rental), params: update_jsonapi_rental_hash(rental_params, @rental.id),
-            headers: headers(ENV["API_TOKEN"])
+                                      headers: headers(ENV["API_TOKEN"])
         end
 
         it "updates rental" do
@@ -166,9 +165,7 @@ RSpec.describe "Rentals API", type: :request do
   def create_jsonapi_rental_hash(attributes)
     { data:
       { type: "rentals",
-        attributes: attributes.transform_keys { |key| key.to_s.dasherize }
-      }
-    }
+        attributes: attributes.transform_keys { |key| key.to_s.dasherize } } }
   end
 
   def update_jsonapi_rental_hash(attributes, id)

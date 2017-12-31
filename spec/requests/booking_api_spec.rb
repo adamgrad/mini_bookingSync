@@ -36,7 +36,6 @@ RSpec.describe "Bookings API", type: :request do
             post "/bookings", params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
                               headers: headers
           }.to change(Booking, :count).by(1)
-
         end
 
         it "returns a 201 response" do
@@ -72,7 +71,7 @@ RSpec.describe "Bookings API", type: :request do
         booking_attributes = FactoryBot.attributes_for(:booking)
         expect {
           post "/bookings", params: create_jsonapi_booking_hash(rental.id, booking_attributes).to_json,
-            headers: headers("InvalidToken")
+                            headers: headers("InvalidToken")
         }.not_to change(Booking, :count)
 
         expect(response).to have_http_status 401
@@ -184,13 +183,11 @@ RSpec.describe "Bookings API", type: :request do
         relationships:
           { rental:
             { data:
-              { type: "rentals", id: rental_id} } },
-        attributes: attributes.transform_keys { |key| key.to_s.dasherize }
-      }
-    }
+              { type: "rentals", id: rental_id } } },
+        attributes: attributes.transform_keys { |key| key.to_s.dasherize } } }
   end
 
-  def update_jsonapi_booking_hash(booking_id,rental_id, attributes)
+  def update_jsonapi_booking_hash(booking_id, rental_id, attributes)
     h1 = { data: { id: booking_id } }
     create_jsonapi_booking_hash(rental_id, attributes).deep_merge(h1).to_json
   end

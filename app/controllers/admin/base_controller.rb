@@ -5,7 +5,7 @@ class Admin::BaseController < ApplicationController
 
   def authenticate
     authenticate_or_request_with_http_basic "Log in." do |name, password|
-      name == "admin" && password == "booking"
+      name == ENV["ADMIN_NAME"] && password == ENV["ADMIN_PASSWORD"]
     end
   end
 end
